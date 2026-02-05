@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nuestros deseos</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,900&family=Montserrat:wght@200;400&display=swap" rel="stylesheet">
+    <style>
+        :root { --oro: #f3e5ab; --rojo: #7a0d0d; --negro: #050101; --cristal: rgba(255, 255, 255, 0.05); }
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: var(--negro); font-family: 'Montserrat', sans-serif; color: white; overflow-x: hidden; }
+
+        /* LOADER */
+        #loader { position: fixed; width: 100%; height: 100%; background: var(--negro); z-index: 9999; display: flex; align-items: center; justify-content: center; transition: opacity 1s; }
+        #loader h2 { font-family: 'Playfair Display', serif; color: var(--oro); letter-spacing: 5px; animation: pulse 2s infinite; text-transform: uppercase; }
+        @keyframes pulse { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
+
+        /* FONDO Y ESTRELLAS */
+        #fondo-rojo { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; background: radial-gradient(circle at center, var(--rojo) 0%, var(--negro) 85%); pointer-events: none; }
+        #canvas-estrellas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 2; pointer-events: none; }
+
+        .main-content { position: relative; z-index: 10; display: flex; flex-direction: column; align-items: center; padding: 5vh 0; }
+        h1 { font-family: 'Playfair Display', serif; font-size: 2.2rem; font-style: italic; background: linear-gradient(to bottom, #fff, var(--oro)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 0; }
+        
+        .grid-menu { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; width: 80%; max-width: 400px; margin-top: 25px; }
+        .cuadro { background: var(--cristal); border: 1px solid rgba(255,255,255,0.1); padding: 20px; border-radius: 15px; cursor: pointer; text-align: center; backdrop-filter: blur(10px); transition: 0.3s; }
+        .cuadro:hover { border-color: var(--oro); transform: scale(1.05); }
+        .full { grid-column: span 2; }
+        h2 { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; margin: 0; }
+
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(5, 1, 1, 0.98); z-index: 2000; display: none; flex-direction: column; align-items: center; padding-top: 20px; overflow-y: auto; }
+
+        /* TÍTULO SECCIÓN MOMENTOS */
+        .seccion-titulo { font-family: 'Playfair Display', serif; color: var(--oro); font-size: 1.5rem; letter-spacing: 4px; margin-bottom: 15px; text-transform: uppercase; }
+
+        /* MOMENTOS */
+        .momentos-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; width: 95%; max-width: 800px; padding: 20px; }
+        .foto-box { position: relative; background: #111; border-radius: 8px; overflow: hidden; display: flex; flex-direction: column; }
+        .foto-box img { width: 100%; aspect-ratio: 1; object-fit: cover; cursor: zoom-in; }
+        .desc-input { background: rgba(255,255,255,0.1); border: none; color: white; font-size: 0.6rem; padding: 5px; outline: none; text-align: center; }
+        .btn-x { position: absolute; top: 2px; right: 2px; background: rgba(255, 0, 0, 0.8); color: white; border: none; border-radius: 50%; width: 20px; height: 20px; cursor: pointer; font-size: 10px; z-index: 5; }
+
+        /* JUEGO */
+        #game-container { position: relative; width: 280px; height: 380px; }
+        #gameCanvas { background: #000; border: 2px solid var(--oro); border-radius: 15px; cursor: none; }
+        #game-over { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); border-radius: 15px; display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 100; }
+        #game-over h3 { font-family: 'Playfair Display', serif; font-size: 3rem; color: var(--oro); margin: 0; }
+
+        /* LIENZO */
+        #canvas-dibujo { border-radius: 10px; touch-action: none; background: white; }
+        .palette { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; margin: 15px 0; }
+        .c-dot { width: 22px; height: 22px; border-radius: 50%; cursor: pointer; border: 1px solid #ddd; }
+
+        /* BOTONES */
+        .btn { background: none; border: 1px solid var(--oro); color: var(--oro); padding: 8px 15px; border-radius: 20px; cursor: pointer; margin: 5px; text-transform: uppercase; font-size: 0.65rem; }
+        .btn:hover { background: var(--oro); color: #000; }
+        
+        #visor-full { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 5000; display: none; align-items: center; justify-content: center; }
+        #visor-full img { max-width: 95%; max-height: 95%; }
+    </style>
+</head>
+<body onmousemove="iluminar(event)">
+
+    <div id="loader"><h2>Nuestra historia</h2></div>
+    <div id="fondo-rojo"></div>
+    <canvas id="canvas-estrellas"></canvas>
+
+    <div class="main-content">
+        <h1>NUESTRA HISTORIA</h1>
+        <div class="grid-menu">
+            <div class="cuadro full" onclick="abrir('m-nosotros')"><h2>Lo que eres para mí</h2></div>
+            <div class="cuadro full" onclick="abrir('m-momentos')"><h2>Momentos</h2></div>
+            <div class="cuadro" onclick="abrir('m-juego')"><h2>Jueguito</h2></div>
+            <div class="cuadro" onclick="abrir('m-dibujo')"><h2>Lienzo</h2></div>
+        </div>
+    </div>
+
+    <div id="m-momentos" class="modal">
+        <div class="seccion-titulo">NUESTROS MOMENTOS</div>
+        <div style="margin-bottom: 10px;">
+            <button class="btn" onclick="document.getElementById('fileIn').click()">Subir Fotos</button>
+            <button class="btn" onclick="cerrar('m-momentos')">Volver</button>
+        </div>
+        <input type="file" id="fileIn" hidden onchange="procesarFoto(event)" multiple>
+        <div class="momentos-grid" id="galeria-fotos"></div>
+    </div>
+
+    <div id="m-juego" class="modal">
+        <div id="current-score" style="color:var(--oro); font-size: 1.2rem; margin-bottom: 5px;">PUNTOS: 0</div>
+        <div id="game-container">
+            <canvas id="gameCanvas" width="280" height="380"></canvas>
+            <div id="game-over">
+                <h3>game over</h3>
+                <p id="final-score" style="margin: 10px 0 5px 0;"></p>
+                <p id="high-record" style="color: var(--oro); font-weight: bold;"></p>
+                <button class="btn" onclick="iniciarJuego()">Reintentar</button>
+            </div>
+        </div>
+        <div style="margin-top: 10px;">
+            <button class="btn" onclick="iniciarJuego()">Jugar</button>
+            <button class="btn" onclick="cerrar('m-juego')">Salir</button>
+        </div>
+    </div>
+
+    <div id="m-dibujo" class="modal">
+        <div style="margin-bottom: 10px;">
+            <button class="btn" onclick="setLienzo('white')">Lienzo Blanco</button>
+            <button class="btn" onclick="setLienzo('black')">Lienzo Negro</button>
+        </div>
+        <canvas id="canvas-dibujo" width="300" height="350"></canvas>
+        <div class="palette" id="colores"></div>
+        <div>
+            <button class="btn" onclick="guardarD()">Guardar Dibujo</button>
+            <button class="btn" onclick="limpiarD()">Borrar</button>
+            <button class="btn" onclick="cerrar('m-dibujo')">Cerrar</button>
+        </div>
+        <div class="momentos-grid" id="galeria-dibujos"></div>
+    </div>
+
+    <div id="m-nosotros" class="modal">
+        <p>
+Tú eres para mí en los días buenos y también en los complicados, cuando no sé cómo explicar lo que siento pero aun así te quedas.
+Eres mi sonrisa inesperada, mi tranquilidad cuando todo pesa y mi razón para creer que vale la pena amar sin miedo.
+
+No prometo ser perfecto, pero sí prometo cuidarte, respetarte y elegirte cada día.
+Quiero crecer contigo, aprender de ti y caminar a tu lado, paso a paso, sin prisas pero sin dudas.
+
+Tú eres mi novia, y para mí eres mi lugar seguro, apoyo y amor.
+Tú eres para mí… hoy, mañana y siempre <3</p>
+        <button class="btn" onclick="cerrar('m-nosotros')">Cerrar</button>
+    </div>
+
+    <div id="visor-full" onclick="this.style.display='none'"><img id="img-v" src=""></div>
+
+    <script>
+        window.onload = () => {
+            setTimeout(() => { document.getElementById('loader').style.opacity = '0'; 
+            setTimeout(() => document.getElementById('loader').style.display='none', 1000); }, 1500);
+            initS(); drawS(); renderF();
+        };
+
+        function iluminar(e) { document.getElementById('fondo-rojo').style.background = `radial-gradient(circle at ${e.clientX}px ${e.clientY}px, var(--rojo) 0%, var(--negro) 80%)`; }
+        function abrir(id) { document.getElementById(id).style.display = 'flex'; if(id==='m-dibujo') initLienzo(); }
+        function cerrar(id) { document.getElementById(id).style.display = 'none'; }
+
+        // --- ESTRELLAS ---
+        const ce = document.getElementById('canvas-estrellas'), ctxE = ce.getContext('2d');
+        let estrellas = [];
+        function initS(){ 
+            ce.width = window.innerWidth; ce.height = window.innerHeight;
+            estrellas = Array.from({length: 100}, () => ({x: Math.random()*ce.width, y: Math.random()*ce.height, r: Math.random()*1.5, v: Math.random()*0.5+0.2}));
+        }
+        function drawS(){
+            ctxE.clearRect(0,0,ce.width, ce.height); ctxE.fillStyle = "white";
+            estrellas.forEach(s => { s.y -= s.v; if(s.y < 0) s.y = ce.height; ctxE.beginPath(); ctxE.arc(s.x, s.y, s.r, 0, Math.PI*2); ctxE.fill(); });
+            requestAnimationFrame(drawS);
+        }
+
+        // --- JUEGO ---
+        const gCan = document.getElementById('gameCanvas'), gCtx = gCan.getContext('2d');
+        let gPlay = false, score = 0, px = 125, obs = [], vBase = 2, lastV = 0;
+        function iniciarJuego() { 
+            document.getElementById('game-over').style.display = 'none';
+            gPlay = true; score = 0; obs = []; vBase = 2; lastV = Date.now(); loopG(); 
+        }
+        gCan.onmousemove = (e) => { const r = gCan.getBoundingClientRect(); px = e.clientX - r.left - 15; };
+        function loopG() {
+            if(!gPlay) return;
+            gCtx.clearRect(0,0,280,380);
+            document.getElementById('current-score').innerText = "PUNTOS: " + score;
+            if(Date.now() - lastV > 5000) { vBase += 0.4; lastV = Date.now(); }
+            gCtx.fillStyle = '#f3e5ab'; gCtx.fillRect(px, 340, 30, 30);
+            if(Math.random() < 0.03) obs.push({x: Math.random()*260, y: -20});
+            obs.forEach((o, i) => {
+                o.y += vBase;
+                gCtx.fillStyle = 'white'; gCtx.fillRect(o.x, o.y, 18, 18);
+                if(o.y > 340 && o.x < px+30 && o.x+18 > px) { 
+                    gPlay = false; 
+                    let r = localStorage.getItem('record_final') || 0;
+                    if(score > r) localStorage.setItem('record_final', score);
+                    document.getElementById('final-score').innerText = "Puntaje: " + score;
+                    document.getElementById('high-record').innerText = "Récord: " + localStorage.getItem('record_final');
+                    document.getElementById('game-over').style.display = 'flex';
+                }
+                if(o.y > 380) { obs.splice(i,1); score += 5; }
+            });
+            requestAnimationFrame(loopG);
+        }
+
+        // --- MOMENTOS ---
+        let dbFotos = JSON.parse(localStorage.getItem('fotos_final') || '[]');
+        function procesarFoto(e) {
+            Array.from(e.target.files).forEach(f => {
+                const r = new FileReader();
+                r.onload = (ev) => { dbFotos.push({img: ev.target.result, desc: ''}); saveF(); };
+                r.readAsDataURL(f);
+            });
+        }
+        function saveF() { localStorage.setItem('fotos_final', JSON.stringify(dbFotos)); renderF(); }
+        function renderF() {
+            const g = document.getElementById('galeria-fotos'); g.innerHTML = '';
+            dbFotos.forEach((item, i) => {
+                const d = document.createElement('div'); d.className = 'foto-box';
+                d.innerHTML = `<button class="btn-x" onclick="dbFotos.splice(${i},1);saveF()">X</button>
+                    <img src="${item.img}" onclick="full('${item.img}')">
+                    <input class="desc-input" placeholder="..." value="${item.desc}" onchange="dbFotos[${i}].desc=this.value;saveF()">`;
+                g.appendChild(d);
+            });
+        }
+
+        // --- LIENZO ---
+        let lCan, lCtx, drawing = false, lienzoColor = 'white';
+        function initLienzo() {
+            lCan = document.getElementById('canvas-dibujo'); lCtx = lCan.getContext('2d');
+            lCtx.lineWidth = 3; lCtx.lineCap = 'round'; lCtx.strokeStyle = "#000";
+            lCan.onmousedown = () => { drawing = true; lCtx.beginPath(); };
+            lCan.onmousemove = (e) => { if(!drawing) return; const r = lCan.getBoundingClientRect(); lCtx.lineTo(e.clientX-r.left, e.clientY-r.top); lCtx.stroke(); };
+            window.onmouseup = () => drawing = false;
+            if(!document.getElementById('colores').innerHTML) {
+                ['#000','#F00','#0F0','#00F','#FF0','#F0F','#0FF','#FFF','#8B4513','#FFA500','#808080'].forEach(c => {
+                    const d = document.createElement('div'); d.className='c-dot'; d.style.background=c; d.onclick=()=>lCtx.strokeStyle=c;
+                    document.getElementById('colores').appendChild(d);
+                });
+            }
+            renderD();
+        }
+        function setLienzo(c) { lienzoColor = c; lCan.style.background = c; }
+        function limpiarD() { lCtx.clearRect(0,0,300,350); }
+        function guardarD() {
+            const temp = document.createElement('canvas'); temp.width=300; temp.height=350;
+            const tCtx = temp.getContext('2d'); tCtx.fillStyle = lienzoColor; tCtx.fillRect(0,0,300,350);
+            tCtx.drawImage(lCan, 0,0);
+            let d = JSON.parse(localStorage.getItem('dibujos_final') || '[]');
+            d.push(temp.toDataURL()); localStorage.setItem('dibujos_final', JSON.stringify(d));
+            renderD(); limpiarD();
+        }
+        function renderD() {
+            const g = document.getElementById('galeria-dibujos'); g.innerHTML = '';
+            let d = JSON.parse(localStorage.getItem('dibujos_final') || '[]');
+            d.forEach((img, i) => {
+                const div = document.createElement('div'); div.className = 'foto-box';
+                div.innerHTML = `<button class="btn-x" onclick="deleteD(${i})">X</button><img src="${img}" onclick="full('${img}')">`;
+                g.appendChild(div);
+            });
+        }
+        function deleteD(i) { let d = JSON.parse(localStorage.getItem('dibujos_final')); d.splice(i,1); localStorage.setItem('dibujos_final', JSON.stringify(d)); renderD(); }
+        function full(s) { document.getElementById('img-v').src=s; document.getElementById('visor-full').style.display='flex'; }
+    </script>
+</body>
+</html>
