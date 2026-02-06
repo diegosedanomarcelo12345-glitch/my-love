@@ -2,12 +2,12 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Nuestros deseos</title>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,900&family=Montserrat:wght@200;400&display=swap" rel="stylesheet">
     <style>
         :root { --oro: #f3e5ab; --rojo: #7a0d0d; --negro: #050101; --cristal: rgba(255, 255, 255, 0.05); }
-        body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: var(--negro); font-family: 'Montserrat', sans-serif; color: white; overflow-x: hidden; }
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: var(--negro); font-family: 'Montserrat', sans-serif; color: white; overflow-x: hidden; touch-action: manipulation; }
 
         /* LOADER */
         #loader { position: fixed; width: 100%; height: 100%; background: var(--negro); z-index: 9999; display: flex; align-items: center; justify-content: center; transition: opacity 1s; }
@@ -19,38 +19,38 @@
         #canvas-estrellas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 2; pointer-events: none; }
 
         .main-content { position: relative; z-index: 10; display: flex; flex-direction: column; align-items: center; padding: 5vh 0; }
-        h1 { font-family: 'Playfair Display', serif; font-size: 2.2rem; font-style: italic; background: linear-gradient(to bottom, #fff, var(--oro)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 0; }
+        h1 { font-family: 'Playfair Display', serif; font-size: 1.8rem; font-style: italic; background: linear-gradient(to bottom, #fff, var(--oro)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 0; text-align: center; padding: 0 10px; }
         
-        .grid-menu { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; width: 80%; max-width: 400px; margin-top: 25px; }
+        .grid-menu { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; width: 85%; max-width: 400px; margin-top: 25px; }
         .cuadro { background: var(--cristal); border: 1px solid rgba(255,255,255,0.1); padding: 20px; border-radius: 15px; cursor: pointer; text-align: center; backdrop-filter: blur(10px); transition: 0.3s; }
         .cuadro:hover { border-color: var(--oro); transform: scale(1.05); }
         .full { grid-column: span 2; }
-        h2 { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; margin: 0; }
+        h2 { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 2px; margin: 0; }
 
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(5, 1, 1, 0.98); z-index: 2000; display: none; flex-direction: column; align-items: center; padding-top: 20px; overflow-y: auto; }
+        .seccion-titulo { font-family: 'Playfair Display', serif; color: var(--oro); font-size: 1.2rem; letter-spacing: 4px; margin-bottom: 15px; text-transform: uppercase; }
 
-        .seccion-titulo { font-family: 'Playfair Display', serif; color: var(--oro); font-size: 1.5rem; letter-spacing: 4px; margin-bottom: 15px; text-transform: uppercase; }
-
-        .momentos-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; width: 95%; max-width: 800px; padding: 20px; }
+        .momentos-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; width: 90%; max-width: 800px; padding: 20px; }
         .foto-box { position: relative; background: #111; border-radius: 8px; overflow: hidden; display: flex; flex-direction: column; }
-        .foto-box img { width: 100%; aspect-ratio: 1; object-fit: cover; cursor: zoom-in; }
-        .desc-input { background: rgba(255,255,255,0.1); border: none; color: white; font-size: 0.6rem; padding: 5px; outline: none; text-align: center; }
-        .btn-x { position: absolute; top: 2px; right: 2px; background: rgba(255, 0, 0, 0.8); color: white; border: none; border-radius: 50%; width: 20px; height: 20px; cursor: pointer; font-size: 10px; z-index: 5; }
+        .foto-box img { width: 100%; aspect-ratio: 1; object-fit: cover; }
+        .desc-input { background: rgba(255,255,255,0.1); border: none; color: white; font-size: 0.7rem; padding: 8px; outline: none; text-align: center; }
+        .btn-x { position: absolute; top: 5px; right: 5px; background: rgba(255, 0, 0, 0.8); color: white; border: none; border-radius: 50%; width: 25px; height: 25px; cursor: pointer; font-size: 12px; z-index: 5; }
 
         #game-container { position: relative; width: 280px; height: 380px; }
-        #gameCanvas { background: #000; border: 2px solid var(--oro); border-radius: 15px; cursor: none; }
-        #game-over { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); border-radius: 15px; display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 100; }
-        #game-over h3 { font-family: 'Playfair Display', serif; font-size: 3rem; color: var(--oro); margin: 0; }
+        #gameCanvas { background: #000; border: 2px solid var(--oro); border-radius: 15px; touch-action: none; cursor: none; }
+        #game-over { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); border-radius: 15px; display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 100; text-align: center; }
+        #game-over h3 { font-family: 'Playfair Display', serif; font-size: 2.5rem; color: var(--oro); margin: 0; }
 
-        #canvas-dibujo { border-radius: 10px; touch-action: none; background: white; }
-        .palette { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; margin: 15px 0; }
-        .c-dot { width: 22px; height: 22px; border-radius: 50%; cursor: pointer; border: 1px solid #ddd; }
+        #canvas-dibujo { border-radius: 10px; background: white; touch-action: none; max-width: 90vw; }
+        .palette { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 15px 10px; max-width: 300px; }
+        .c-dot { width: 30px; height: 30px; border-radius: 50%; cursor: pointer; border: 2px solid rgba(255,255,255,0.2); }
 
-        .btn { background: none; border: 1px solid var(--oro); color: var(--oro); padding: 8px 15px; border-radius: 20px; cursor: pointer; margin: 5px; text-transform: uppercase; font-size: 0.65rem; }
+        .btn { background: none; border: 1px solid var(--oro); color: var(--oro); padding: 10px 20px; border-radius: 20px; cursor: pointer; margin: 5px; text-transform: uppercase; font-size: 0.7rem; }
         .btn:hover { background: var(--oro); color: #000; }
         
         #visor-full { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 5000; display: none; align-items: center; justify-content: center; }
         #visor-full img { max-width: 95%; max-height: 95%; }
+        .texto-carta { padding: 30px; text-align: center; line-height: 1.8; font-size: 0.9rem; max-width: 85%; }
     </style>
 </head>
 <body onmousemove="iluminar(event)">
@@ -69,8 +69,21 @@
         </div>
     </div>
 
+    <div id="m-nosotros" class="modal">
+        <div class="seccion-titulo">Para ti</div>
+        <div class="texto-carta">
+            Tú eres para mí en los días buenos y también en los complicados, cuando no sé cómo explicar lo que siento pero aun así te quedas.
+            Eres mi sonrisa inesperada, mi tranquilidad cuando todo pesa y mi razón para creer que vale la pena amar sin miedo.<br><br>
+            No prometo ser perfecto, pero sí prometo cuidarte, respetarte y elegirte cada día.
+            Quiero crecer contigo, aprender de ti y caminar a tu lado, paso a paso, sin prisas pero sin dudas.<br><br>
+            Tú eres mi novia, y para mí eres mi lugar seguro, apoyo y amor.
+            Tú eres para mí… hoy, mañana y siempre <3
+        </div>
+        <button class="btn" onclick="cerrar('m-nosotros')">Cerrar</button>
+    </div>
+
     <div id="m-momentos" class="modal">
-        <div class="seccion-titulo">NUESTROS MOMENTOS</div>
+        <div class="seccion-titulo">MOMENTOS</div>
         <div style="margin-bottom: 10px;">
             <button class="btn" onclick="document.getElementById('fileIn').click()">Subir Fotos</button>
             <button class="btn" onclick="cerrar('m-momentos')">Volver</button>
@@ -84,7 +97,7 @@
         <div id="game-container">
             <canvas id="gameCanvas" width="280" height="380"></canvas>
             <div id="game-over">
-                <h3>game over</h3>
+                <h3>GAME OVER</h3>
                 <p id="final-score" style="margin: 10px 0 5px 0;"></p>
                 <p id="high-record" style="color: var(--oro); font-weight: bold;"></p>
                 <button class="btn" onclick="iniciarJuego()">Reintentar</button>
@@ -97,31 +110,19 @@
     </div>
 
     <div id="m-dibujo" class="modal">
+        <div class="seccion-titulo">DIBUJA ALGO</div>
         <div style="margin-bottom: 10px;">
-            <button class="btn" onclick="setLienzo('white')">Lienzo Blanco</button>
-            <button class="btn" onclick="setLienzo('black')">Lienzo Negro</button>
+            <button class="btn" onclick="setLienzo('white')">Blanco</button>
+            <button class="btn" onclick="setLienzo('black')">Negro</button>
         </div>
         <canvas id="canvas-dibujo" width="300" height="350"></canvas>
         <div class="palette" id="colores"></div>
         <div>
-            <button class="btn" onclick="guardarD()">Guardar Dibujo</button>
+            <button class="btn" onclick="guardarD()">Guardar</button>
             <button class="btn" onclick="limpiarD()">Borrar</button>
             <button class="btn" onclick="cerrar('m-dibujo')">Cerrar</button>
         </div>
         <div class="momentos-grid" id="galeria-dibujos"></div>
-    </div>
-
-    <div id="m-nosotros" class="modal">
-        <p style="padding: 20px; text-align: center; line-height: 1.6;">
-Tú eres para mí en los días buenos y también en los complicados, cuando no sé cómo explicar lo que siento pero aun así te quedas.
-Eres mi sonrisa inesperada, mi tranquilidad cuando todo pesa y mi razón para creer que vale la pena amar sin miedo.<br><br>
-
-No prometo ser perfecto, pero sí prometo cuidarte, respetarte y elegirte cada día.
-Quiero crecer contigo, aprender de ti y caminar a tu lado, paso a paso, sin prisas pero sin dudas.<br><br>
-
-Tú eres mi novia, y para mí eres mi lugar seguro, apoyo y amor.
-Tú eres para mí… hoy, mañana y siempre <3</p>
-        <button class="btn" onclick="cerrar('m-nosotros')">Cerrar</button>
     </div>
 
     <div id="visor-full" onclick="this.style.display='none'"><img id="img-v" src=""></div>
@@ -143,7 +144,6 @@ Tú eres para mí… hoy, mañana y siempre <3</p>
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // --- FUNCIONES COMPARTIDAS ---
         window.procesarFoto = (e) => {
             Array.from(e.target.files).forEach(f => {
                 const r = new FileReader();
@@ -155,12 +155,12 @@ Tú eres para mí… hoy, mañana y siempre <3</p>
         onValue(ref(db, 'fotos'), (snapshot) => {
             const g = document.getElementById('galeria-fotos'); g.innerHTML = '';
             const data = snapshot.val();
-            if(data) Object.keys(data).forEach(k => {
+            if(data) Object.keys(data).reverse().forEach(k => {
                 const item = data[k];
                 const d = document.createElement('div'); d.className = 'foto-box';
                 d.innerHTML = `<button class="btn-x" onclick="eliminarF('${k}')">X</button>
                     <img src="${item.img}" onclick="full('${item.img}')">
-                    <input class="desc-input" placeholder="..." value="${item.desc}" onchange="actDesc('${k}', this.value)">`;
+                    <input class="desc-input" placeholder="Añadir nota..." value="${item.desc}" onchange="actDesc('${k}', this.value)">`;
                 g.appendChild(d);
             });
         });
@@ -180,17 +180,17 @@ Tú eres para mí… hoy, mañana y siempre <3</p>
         onValue(ref(db, 'dibujos'), (snapshot) => {
             const g = document.getElementById('galeria-dibujos'); g.innerHTML = '';
             const data = snapshot.val();
-            if(data) Object.keys(data).forEach(k => {
+            if(data) Object.keys(data).reverse().forEach(k => {
                 const d = document.createElement('div'); d.className = 'foto-box';
                 d.innerHTML = `<button class="btn-x" onclick="eliminarD('${k}')">X</button><img src="${data[k].img}" onclick="full('${data[k].img}')">`;
                 g.appendChild(d);
             });
         });
         window.eliminarD = (k) => remove(ref(db, 'dibujos/'+k));
+        window.full = (s) => { document.getElementById('img-v').src=s; document.getElementById('visor-full').style.display='flex'; };
     </script>
 
     <script>
-        // --- TODA TU LÓGICA ORIGINAL ---
         window.onload = () => {
             setTimeout(() => { document.getElementById('loader').style.opacity = '0';
             setTimeout(() => document.getElementById('loader').style.display='none', 1000); }, 1500);
@@ -201,6 +201,7 @@ Tú eres para mí… hoy, mañana y siempre <3</p>
         function abrir(id) { document.getElementById(id).style.display = 'flex'; if(id==='m-dibujo') initLienzo(); }
         function cerrar(id) { document.getElementById(id).style.display = 'none'; gPlay = false; }
 
+        // ESTRELLAS
         const ce = document.getElementById('canvas-estrellas'), ctxE = ce.getContext('2d');
         let estrellas = [];
         function initS(){
@@ -213,44 +214,85 @@ Tú eres para mí… hoy, mañana y siempre <3</p>
             requestAnimationFrame(drawS);
         }
 
+        // JUEGO (RESTAURADO RÉCORD Y VELOCIDAD)
         const gCan = document.getElementById('gameCanvas'), gCtx = gCan.getContext('2d');
         let gPlay = false, score = 0, px = 125, obs = [], vBase = 2, lastV = 0;
+        
         function iniciarJuego() {
             document.getElementById('game-over').style.display = 'none';
             gPlay = true; score = 0; obs = []; vBase = 2; lastV = Date.now(); loopG();
         }
-        gCan.onmousemove = (e) => { const r = gCan.getBoundingClientRect(); px = e.clientX - r.left - 15; };
+
+        function moverJugador(e) {
+            const r = gCan.getBoundingClientRect();
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            px = clientX - r.left - 15;
+            if(e.touches) e.preventDefault();
+        }
+        gCan.onmousemove = moverJugador;
+        gCan.addEventListener('touchmove', moverJugador, {passive: false});
+
         function loopG() {
             if(!gPlay) return;
             gCtx.clearRect(0,0,280,380);
             document.getElementById('current-score').innerText = "PUNTOS: " + score;
+            
+            // Aumentar velocidad cada 5 segundos
             if(Date.now() - lastV > 5000) { vBase += 0.4; lastV = Date.now(); }
-            gCtx.fillStyle = '#f3e5ab'; gCtx.fillRect(px, 340, 30, 30);
+            
+            gCtx.fillStyle = '#f3e5ab'; 
+            gCtx.fillRect(px, 340, 30, 30);
+            
             if(Math.random() < 0.03) obs.push({x: Math.random()*260, y: -20});
+            
             obs.forEach((o, i) => {
                 o.y += vBase;
-                gCtx.fillStyle = 'white'; gCtx.fillRect(o.x, o.y, 18, 18);
+                gCtx.fillStyle = 'white'; 
+                gCtx.fillRect(o.x, o.y, 18, 18);
+                
+                // Colisión
                 if(o.y > 340 && o.x < px+30 && o.x+18 > px) {
                     gPlay = false;
-                    let r = localStorage.getItem('record_final') || 0;
-                    if(score > r) localStorage.setItem('record_final', score);
+                    let record = localStorage.getItem('record_final') || 0;
+                    if(score > record) {
+                        localStorage.setItem('record_final', score);
+                        record = score;
+                    }
                     document.getElementById('final-score').innerText = "Puntaje: " + score;
-                    document.getElementById('high-record').innerText = "Récord: " + localStorage.getItem('record_final');
+                    document.getElementById('high-record').innerText = "Récord: " + record;
                     document.getElementById('game-over').style.display = 'flex';
                 }
-                if(o.y > 380) { obs.splice(i,1); score += 5; }
+                
+                if(o.y > 380) { 
+                    obs.splice(i,1); 
+                    score += 5; 
+                }
             });
             requestAnimationFrame(loopG);
         }
 
+        // LIENZO (PARA CELULAR)
         let lCan, lCtx, drawing = false;
         window.lienzoColor = 'white';
         function initLienzo() {
             lCan = document.getElementById('canvas-dibujo'); lCtx = lCan.getContext('2d');
             lCtx.lineWidth = 3; lCtx.lineCap = 'round'; lCtx.strokeStyle = "#000";
-            lCan.onmousedown = () => { drawing = true; lCtx.beginPath(); };
-            lCan.onmousemove = (e) => { if(!drawing) return; const r = lCan.getBoundingClientRect(); lCtx.lineTo(e.clientX-r.left, e.clientY-r.top); lCtx.stroke(); };
-            window.onmouseup = () => drawing = false;
+
+            function getPos(e) {
+                const r = lCan.getBoundingClientRect();
+                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+                return { x: clientX - r.left, y: clientY - r.top };
+            }
+            function empezar(e) { drawing = true; lCtx.beginPath(); const p = getPos(e); lCtx.moveTo(p.x, p.y); if(e.touches) e.preventDefault(); }
+            function mover(e) { if(!drawing) return; e.preventDefault(); const p = getPos(e); lCtx.lineTo(p.x, p.y); lCtx.stroke(); }
+            function parar() { drawing = false; }
+
+            lCan.onmousedown = empezar; lCan.onmousemove = mover; window.onmouseup = parar;
+            lCan.addEventListener('touchstart', empezar, {passive: false});
+            lCan.addEventListener('touchmove', mover, {passive: false});
+            lCan.addEventListener('touchend', parar);
+
             if(!document.getElementById('colores').innerHTML) {
                 ['#000','#F00','#0F0','#00F','#FF0','#F0F','#0FF','#FFF','#8B4513','#FFA500','#808080'].forEach(c => {
                     const d = document.createElement('div'); d.className='c-dot'; d.style.background=c; d.onclick=()=>lCtx.strokeStyle=c;
@@ -260,7 +302,6 @@ Tú eres para mí… hoy, mañana y siempre <3</p>
         }
         function setLienzo(c) { window.lienzoColor = c; lCan.style.background = c; }
         window.limpiarD = () => { lCtx.clearRect(0,0,300,350); }
-        function full(s) { document.getElementById('img-v').src=s; document.getElementById('visor-full').style.display='flex'; }
     </script>
 </body>
 </html>
