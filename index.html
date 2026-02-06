@@ -29,28 +29,23 @@
 
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(5, 1, 1, 0.98); z-index: 2000; display: none; flex-direction: column; align-items: center; padding-top: 20px; overflow-y: auto; }
 
-        /* TÍTULO SECCIÓN MOMENTOS */
         .seccion-titulo { font-family: 'Playfair Display', serif; color: var(--oro); font-size: 1.5rem; letter-spacing: 4px; margin-bottom: 15px; text-transform: uppercase; }
 
-        /* MOMENTOS */
         .momentos-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; width: 95%; max-width: 800px; padding: 20px; }
         .foto-box { position: relative; background: #111; border-radius: 8px; overflow: hidden; display: flex; flex-direction: column; }
         .foto-box img { width: 100%; aspect-ratio: 1; object-fit: cover; cursor: zoom-in; }
         .desc-input { background: rgba(255,255,255,0.1); border: none; color: white; font-size: 0.6rem; padding: 5px; outline: none; text-align: center; }
         .btn-x { position: absolute; top: 2px; right: 2px; background: rgba(255, 0, 0, 0.8); color: white; border: none; border-radius: 50%; width: 20px; height: 20px; cursor: pointer; font-size: 10px; z-index: 5; }
 
-        /* JUEGO */
         #game-container { position: relative; width: 280px; height: 380px; }
         #gameCanvas { background: #000; border: 2px solid var(--oro); border-radius: 15px; cursor: none; }
         #game-over { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); border-radius: 15px; display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 100; }
         #game-over h3 { font-family: 'Playfair Display', serif; font-size: 3rem; color: var(--oro); margin: 0; }
 
-        /* LIENZO */
         #canvas-dibujo { border-radius: 10px; touch-action: none; background: white; }
         .palette { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; margin: 15px 0; }
         .c-dot { width: 22px; height: 22px; border-radius: 50%; cursor: pointer; border: 1px solid #ddd; }
 
-        /* BOTONES */
         .btn { background: none; border: 1px solid var(--oro); color: var(--oro); padding: 8px 15px; border-radius: 20px; cursor: pointer; margin: 5px; text-transform: uppercase; font-size: 0.65rem; }
         .btn:hover { background: var(--oro); color: #000; }
         
@@ -117,12 +112,12 @@
     </div>
 
     <div id="m-nosotros" class="modal">
-        <p>
+        <p style="padding: 20px; text-align: center; line-height: 1.6;">
 Tú eres para mí en los días buenos y también en los complicados, cuando no sé cómo explicar lo que siento pero aun así te quedas.
-Eres mi sonrisa inesperada, mi tranquilidad cuando todo pesa y mi razón para creer que vale la pena amar sin miedo.
+Eres mi sonrisa inesperada, mi tranquilidad cuando todo pesa y mi razón para creer que vale la pena amar sin miedo.<br><br>
 
 No prometo ser perfecto, pero sí prometo cuidarte, respetarte y elegirte cada día.
-Quiero crecer contigo, aprender de ti y caminar a tu lado, paso a paso, sin prisas pero sin dudas.
+Quiero crecer contigo, aprender de ti y caminar a tu lado, paso a paso, sin prisas pero sin dudas.<br><br>
 
 Tú eres mi novia, y para mí eres mi lugar seguro, apoyo y amor.
 Tú eres para mí… hoy, mañana y siempre <3</p>
@@ -131,21 +126,84 @@ Tú eres para mí… hoy, mañana y siempre <3</p>
 
     <div id="visor-full" onclick="this.style.display='none'"><img id="img-v" src=""></div>
 
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
+        import { getDatabase, ref, push, onValue, remove, set } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyC1Wcb9qz8zKbru8Qtf_G4DHP3df0q1gs0",
+            authDomain: "nuestrahistoria-94a5d.firebaseapp.com",
+            projectId: "nuestrahistoria-94a5d",
+            storageBucket: "nuestrahistoria-94a5d.firebasestorage.app",
+            messagingSenderId: "255371212608",
+            appId: "1:255371212608:web:b295e80e340718f4cfaca5",
+            databaseURL: "https://nuestrahistoria-94a5d-default-rtdb.firebaseio.com/"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // --- FUNCIONES COMPARTIDAS ---
+        window.procesarFoto = (e) => {
+            Array.from(e.target.files).forEach(f => {
+                const r = new FileReader();
+                r.onload = (ev) => push(ref(db, 'fotos'), { img: ev.target.result, desc: '' });
+                r.readAsDataURL(f);
+            });
+        };
+
+        onValue(ref(db, 'fotos'), (snapshot) => {
+            const g = document.getElementById('galeria-fotos'); g.innerHTML = '';
+            const data = snapshot.val();
+            if(data) Object.keys(data).forEach(k => {
+                const item = data[k];
+                const d = document.createElement('div'); d.className = 'foto-box';
+                d.innerHTML = `<button class="btn-x" onclick="eliminarF('${k}')">X</button>
+                    <img src="${item.img}" onclick="full('${item.img}')">
+                    <input class="desc-input" placeholder="..." value="${item.desc}" onchange="actDesc('${k}', this.value)">`;
+                g.appendChild(d);
+            });
+        });
+
+        window.eliminarF = (k) => remove(ref(db, 'fotos/'+k));
+        window.actDesc = (k, v) => set(ref(db, `fotos/${k}/desc`), v);
+
+        window.guardarD = () => {
+            const lCan = document.getElementById('canvas-dibujo');
+            const temp = document.createElement('canvas'); temp.width=300; temp.height=350;
+            const tCtx = temp.getContext('2d'); tCtx.fillStyle = window.lienzoColor || 'white'; tCtx.fillRect(0,0,300,350);
+            tCtx.drawImage(lCan, 0,0);
+            push(ref(db, 'dibujos'), { img: temp.toDataURL() });
+            window.limpiarD();
+        };
+
+        onValue(ref(db, 'dibujos'), (snapshot) => {
+            const g = document.getElementById('galeria-dibujos'); g.innerHTML = '';
+            const data = snapshot.val();
+            if(data) Object.keys(data).forEach(k => {
+                const d = document.createElement('div'); d.className = 'foto-box';
+                d.innerHTML = `<button class="btn-x" onclick="eliminarD('${k}')">X</button><img src="${data[k].img}" onclick="full('${data[k].img}')">`;
+                g.appendChild(d);
+            });
+        });
+        window.eliminarD = (k) => remove(ref(db, 'dibujos/'+k));
+    </script>
+
     <script>
+        // --- TODA TU LÓGICA ORIGINAL ---
         window.onload = () => {
-            setTimeout(() => { document.getElementById('loader').style.opacity = '0'; 
+            setTimeout(() => { document.getElementById('loader').style.opacity = '0';
             setTimeout(() => document.getElementById('loader').style.display='none', 1000); }, 1500);
-            initS(); drawS(); renderF();
+            initS(); drawS(); 
         };
 
         function iluminar(e) { document.getElementById('fondo-rojo').style.background = `radial-gradient(circle at ${e.clientX}px ${e.clientY}px, var(--rojo) 0%, var(--negro) 80%)`; }
         function abrir(id) { document.getElementById(id).style.display = 'flex'; if(id==='m-dibujo') initLienzo(); }
-        function cerrar(id) { document.getElementById(id).style.display = 'none'; }
+        function cerrar(id) { document.getElementById(id).style.display = 'none'; gPlay = false; }
 
-        // --- ESTRELLAS ---
         const ce = document.getElementById('canvas-estrellas'), ctxE = ce.getContext('2d');
         let estrellas = [];
-        function initS(){ 
+        function initS(){
             ce.width = window.innerWidth; ce.height = window.innerHeight;
             estrellas = Array.from({length: 100}, () => ({x: Math.random()*ce.width, y: Math.random()*ce.height, r: Math.random()*1.5, v: Math.random()*0.5+0.2}));
         }
@@ -155,12 +213,11 @@ Tú eres para mí… hoy, mañana y siempre <3</p>
             requestAnimationFrame(drawS);
         }
 
-        // --- JUEGO ---
         const gCan = document.getElementById('gameCanvas'), gCtx = gCan.getContext('2d');
         let gPlay = false, score = 0, px = 125, obs = [], vBase = 2, lastV = 0;
-        function iniciarJuego() { 
+        function iniciarJuego() {
             document.getElementById('game-over').style.display = 'none';
-            gPlay = true; score = 0; obs = []; vBase = 2; lastV = Date.now(); loopG(); 
+            gPlay = true; score = 0; obs = []; vBase = 2; lastV = Date.now(); loopG();
         }
         gCan.onmousemove = (e) => { const r = gCan.getBoundingClientRect(); px = e.clientX - r.left - 15; };
         function loopG() {
@@ -173,8 +230,8 @@ Tú eres para mí… hoy, mañana y siempre <3</p>
             obs.forEach((o, i) => {
                 o.y += vBase;
                 gCtx.fillStyle = 'white'; gCtx.fillRect(o.x, o.y, 18, 18);
-                if(o.y > 340 && o.x < px+30 && o.x+18 > px) { 
-                    gPlay = false; 
+                if(o.y > 340 && o.x < px+30 && o.x+18 > px) {
+                    gPlay = false;
                     let r = localStorage.getItem('record_final') || 0;
                     if(score > r) localStorage.setItem('record_final', score);
                     document.getElementById('final-score').innerText = "Puntaje: " + score;
@@ -186,29 +243,8 @@ Tú eres para mí… hoy, mañana y siempre <3</p>
             requestAnimationFrame(loopG);
         }
 
-        // --- MOMENTOS ---
-        let dbFotos = JSON.parse(localStorage.getItem('fotos_final') || '[]');
-        function procesarFoto(e) {
-            Array.from(e.target.files).forEach(f => {
-                const r = new FileReader();
-                r.onload = (ev) => { dbFotos.push({img: ev.target.result, desc: ''}); saveF(); };
-                r.readAsDataURL(f);
-            });
-        }
-        function saveF() { localStorage.setItem('fotos_final', JSON.stringify(dbFotos)); renderF(); }
-        function renderF() {
-            const g = document.getElementById('galeria-fotos'); g.innerHTML = '';
-            dbFotos.forEach((item, i) => {
-                const d = document.createElement('div'); d.className = 'foto-box';
-                d.innerHTML = `<button class="btn-x" onclick="dbFotos.splice(${i},1);saveF()">X</button>
-                    <img src="${item.img}" onclick="full('${item.img}')">
-                    <input class="desc-input" placeholder="..." value="${item.desc}" onchange="dbFotos[${i}].desc=this.value;saveF()">`;
-                g.appendChild(d);
-            });
-        }
-
-        // --- LIENZO ---
-        let lCan, lCtx, drawing = false, lienzoColor = 'white';
+        let lCan, lCtx, drawing = false;
+        window.lienzoColor = 'white';
         function initLienzo() {
             lCan = document.getElementById('canvas-dibujo'); lCtx = lCan.getContext('2d');
             lCtx.lineWidth = 3; lCtx.lineCap = 'round'; lCtx.strokeStyle = "#000";
@@ -221,28 +257,9 @@ Tú eres para mí… hoy, mañana y siempre <3</p>
                     document.getElementById('colores').appendChild(d);
                 });
             }
-            renderD();
         }
-        function setLienzo(c) { lienzoColor = c; lCan.style.background = c; }
-        function limpiarD() { lCtx.clearRect(0,0,300,350); }
-        function guardarD() {
-            const temp = document.createElement('canvas'); temp.width=300; temp.height=350;
-            const tCtx = temp.getContext('2d'); tCtx.fillStyle = lienzoColor; tCtx.fillRect(0,0,300,350);
-            tCtx.drawImage(lCan, 0,0);
-            let d = JSON.parse(localStorage.getItem('dibujos_final') || '[]');
-            d.push(temp.toDataURL()); localStorage.setItem('dibujos_final', JSON.stringify(d));
-            renderD(); limpiarD();
-        }
-        function renderD() {
-            const g = document.getElementById('galeria-dibujos'); g.innerHTML = '';
-            let d = JSON.parse(localStorage.getItem('dibujos_final') || '[]');
-            d.forEach((img, i) => {
-                const div = document.createElement('div'); div.className = 'foto-box';
-                div.innerHTML = `<button class="btn-x" onclick="deleteD(${i})">X</button><img src="${img}" onclick="full('${img}')">`;
-                g.appendChild(div);
-            });
-        }
-        function deleteD(i) { let d = JSON.parse(localStorage.getItem('dibujos_final')); d.splice(i,1); localStorage.setItem('dibujos_final', JSON.stringify(d)); renderD(); }
+        function setLienzo(c) { window.lienzoColor = c; lCan.style.background = c; }
+        window.limpiarD = () => { lCtx.clearRect(0,0,300,350); }
         function full(s) { document.getElementById('img-v').src=s; document.getElementById('visor-full').style.display='flex'; }
     </script>
 </body>
