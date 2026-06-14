@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Nuestros deseos</title>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,900&family=Montserrat:wght@200;400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght=700&family=Playfair+Display:ital,wght=0,700;1,900&family=Montserrat:wght=200;400;600;700;900&display=swap" rel="stylesheet">
     <style>
-        :root { --oro: #f3e5ab; --rojo: #7a0d0d; --negro: #050101; --cristal: rgba(255, 255, 255, 0.05); }
+        :root { --oro: #f3e5ab; --rojo: #7a0d0d; --negro: #050101; --cristal: rgba(255, 255, 255, 0.05); --netflix-red: #E50914; }
         body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: var(--negro); font-family: 'Montserrat', sans-serif; color: white; overflow-x: hidden; touch-action: manipulation; }
 
         /* LOADER */
@@ -27,33 +27,98 @@
         .full { grid-column: span 2; }
         h2 { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 2px; margin: 0; }
 
-        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(5, 1, 1, 0.98); z-index: 2000; display: none; flex-direction: column; align-items: center; padding-top: 20px; overflow-y: auto; }
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(5, 1, 1, 0.98); z-index: 2000; display: none; flex-direction: column; align-items: center; padding-top: 0px; overflow-y: auto; }
         .seccion-titulo { font-family: 'Playfair Display', serif; color: var(--oro); font-size: 1.2rem; letter-spacing: 4px; margin-bottom: 15px; text-transform: uppercase; }
 
-        .momentos-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; width: 90%; max-width: 800px; padding: 20px; }
-        .foto-box { position: relative; background: #111; border-radius: 8px; overflow: hidden; display: flex; flex-direction: column; }
-        .foto-box img { width: 100%; aspect-ratio: 1; object-fit: cover; }
-        .desc-input { background: rgba(255,255,255,0.1); border: none; color: white; font-size: 0.7rem; padding: 8px; outline: none; text-align: center; }
-        .btn-x { position: absolute; top: 5px; right: 5px; background: rgba(255, 0, 0, 0.8); color: white; border: none; border-radius: 50%; width: 25px; height: 25px; cursor: pointer; font-size: 12px; z-index: 5; }
+        /* INTERFAZ ESTILO NETFLIX (MOMENTOS) */
+        .netflix-container { width: 100%; max-width: 500px; background: #000; min-height: 100vh; position: relative; display: flex; flex-direction: column; padding-bottom: 40px; }
+        .netflix-header { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; position: absolute; top: 0; width: 100%; box-sizing: border-box; z-index: 100; background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent); }
+        .netflix-logo { color: var(--netflix-red); font-family: 'Montserrat', sans-serif; font-weight: 900; font-size: 1.6rem; letter-spacing: -1px; }
+        .netflix-nav-icons { display: flex; gap: 20px; align-items: center; }
+        .netflix-icon-btn { background: none; border: none; color: white; font-size: 1.2rem; cursor: pointer; }
+        .netflix-avatar { width: 24px; height: 24px; background: #b2db11; border-radius: 3px; display: inline-block; position: relative; }
+        
+        .netflix-hero { width: 100%; height: 65vh; position: relative; background-size: cover; background-position: center; background-color: #1a1a1a; cursor: pointer; display: flex; flex-direction: column; justify-content: flex-end; }
+        .netflix-hero::before { content: ''; position: absolute; top:0; left:0; width:100%; height:100%; background: linear-gradient(to top, #000 20%, transparent 65%), linear-gradient(to bottom, rgba(0,0,0,0.5) 0%, transparent 25%); z-index: 1; }
+        .hero-placeholder { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; color: rgba(255,255,255,0.4); font-size: 0.8rem; pointer-events: none; z-index: 2; width: 80%; }
+        
+        .hero-content { position: relative; z-index: 5; padding: 0 20px 10px 20px; display: flex; flex-direction: column; align-items: flex-start; }
+        .n-tag { display: flex; align-items: center; gap: 5px; font-weight: 900; font-size: 0.75rem; letter-spacing: 3px; color: #fff; margin-bottom: 2px; }
+        .n-tag span { color: var(--netflix-red); font-size: 1.2rem; font-weight: 900; }
+        
+        .serie-title { font-family: 'Caveat', cursive; font-size: 3.2rem; font-weight: 700; margin: 0 0 5px 0; line-height: 0.9; text-shadow: 2px 2px 4px rgba(0,0,0,0.9); color: #ffffff; }
+        
+        .meta-badges { display: flex; align-items: center; gap: 15px; font-size: 0.8rem; font-weight: 700; margin-bottom: 12px; width: 100%; }
+        .top10 { background: var(--netflix-red); color: white; padding: 1px 4px; font-size: 0.55rem; font-weight: 900; border-radius: 2px; text-align: center; line-height: 1; display: flex; flex-direction: column; align-items: center; }
+        .top10 span { font-size: 0.4rem; }
+        
+        .netflix-buttons { display: flex; gap: 10px; width: 100%; max-width: 320px; margin-bottom: 12px; }
+        .btn-play { flex: 1; background: white; color: black; border: none; padding: 6px; border-radius: 4px; font-weight: 700; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; gap: 5px; cursor: pointer; }
+        .btn-add { flex: 1.3; background: rgba(120, 120, 120, 0.5); color: white; border: none; padding: 6px; border-radius: 4px; font-weight: 700; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; gap: 5px; cursor: pointer; backdrop-filter: blur(5px); }
+        
+        .synopsis { font-size: 0.72rem; color: #e2e2e2; line-height: 1.35; margin: 0 0 10px 0; text-align: left; max-width: 100%; text-shadow: 1px 1px 3px rgba(0,0,0,0.9); font-weight: 400; }
+        
+        .episodios-section { padding: 0 20px; }
+        .episodios-title { font-size: 0.95rem; font-weight: 700; margin-bottom: 12px; letter-spacing: 0.5px; color: #fff; }
+        
+        .netflix-grid { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; scroll-behavior: smooth; -webkit-overflow-scrolling: touch; }
+        .netflix-grid::-webkit-scrollbar { height: 4px; }
+        .netflix-grid::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 2px; }
+        
+        .episode-card { flex: 0 0 105px; background: #000; border-radius: 6px; overflow: hidden; display: flex; flex-direction: column; position: relative; }
+        .episode-thumb-container { width: 100%; aspect-ratio: 2/3; position: relative; overflow: hidden; background: #141414; border-radius: 6px; }
+        .episode-card img { width: 100%; height: 100%; object-fit: cover; cursor: pointer; }
+        .episode-info { padding: 4px 0; display: flex; flex-direction: column; gap: 3px; }
+        .episode-note-input { background: rgba(255,255,255,0.08); border: none; border-radius: 3px; color: white; font-size: 0.6rem; padding: 3px; outline: none; font-family: inherit; text-align: center; }
+        .btn-delete-episode { position: absolute; top: 4px; right: 4px; background: rgba(0, 0, 0, 0.7); color: #fff; border: 1px solid rgba(255,255,255,0.3); border-radius: 50%; width: 18px; height: 18px; cursor: pointer; font-size: 8px; z-index: 10; display: flex; align-items: center; justify-content: center; }
 
+        /* NOTITAS */
+        .notitas-container { width: 90%; max-width: 400px; display: flex; flex-direction: column; gap: 15px; margin-top: 10px; }
+        .notitas-form { display: flex; gap: 8px; }
+        .notitas-input { flex: 1; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; color: white; padding: 10px; font-family: inherit; font-size: 0.85rem; outline: none; }
+        .notitas-input:focus { border-color: var(--oro); }
+        .notitas-grid { display: flex; flex-direction: column; gap: 10px; max-height: 50vh; overflow-y: auto; padding-right: 5px; }
+        .notita-card { background: var(--cristal); border-left: 3px solid var(--oro); padding: 12px; border-radius: 0 8px 8px 0; position: relative; word-break: break-word; backdrop-filter: blur(5px); }
+        .notita-text { font-size: 0.85rem; line-height: 1.4; margin-bottom: 4px; color: #f5f5f5; }
+        .notita-date { font-size: 0.6rem; color: #888; }
+        .btn-delete-note { position: absolute; top: 8px; right: 8px; background: none; border: none; color: #888; cursor: pointer; font-size: 0.75rem; }
+        .btn-delete-note:hover { color: red; }
+
+        /* INTERFAZ CÁPSULA DE MENSAJES MODIFICADA */
+        .capsula-box { width: 85%; max-width: 380px; display: flex; flex-direction: column; align-items: center; gap: 15px; text-align: center; margin-top: 10px; }
+        .capsula-subcontainer { width: 100%; display: none; flex-direction: column; gap: 12px; background: var(--cristal); padding: 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); box-sizing: border-box; }
+        .capsula-textarea { width: 100%; height: 100px; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; color: white; padding: 10px; font-family: inherit; font-size: 0.85rem; resize: none; box-sizing: border-box; outline: none; }
+        .capsula-input-code { width: 100%; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; color: white; padding: 10px; font-family: inherit; font-size: 0.85rem; text-align: center; box-sizing: border-box; outline: none; }
+        .capsula-textarea:focus, .capsula-input-code:focus { border-color: var(--oro); }
+        .mensaje-revelado { font-family: 'Playfair Display', serif; font-size: 1.1rem; line-height: 1.6; color: var(--oro); white-space: pre-wrap; margin-top: 10px; padding: 15px; border: 1px dashed var(--oro); border-radius: 8px; background: rgba(0,0,0,0.3); }
+        .status-capsula { font-size: 0.85rem; color: #2ecc71; margin-top: 8px; display: none; font-weight: 600; text-shadow: 1px 1px 2px rgba(0,0,0,0.8); }
+
+        /* JUEGO, LIENZO Y OTROS */
         #game-container { position: relative; width: 280px; height: 380px; }
         #gameCanvas { background: #000; border: 2px solid var(--oro); border-radius: 15px; touch-action: none; cursor: none; }
         #game-over { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); border-radius: 15px; display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 100; text-align: center; }
         #game-over h3 { font-family: 'Playfair Display', serif; font-size: 2.5rem; color: var(--oro); margin: 0; }
 
-        #canvas-dibujo { border-radius: 10px; background: white; touch-action: none; max-width: 90vw; }
+        #canvas-dibujo, #canvas-arbol { border-radius: 10px; background: white; touch-action: none; max-width: 90vw; }
+        #canvas-arbol { background: #070907; border: 1px solid rgba(255,255,255,0.1); }
         .palette { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 15px 10px; max-width: 300px; }
         .c-dot { width: 30px; height: 30px; border-radius: 50%; cursor: pointer; border: 2px solid rgba(255,255,255,0.2); }
 
         .btn { background: none; border: 1px solid var(--oro); color: var(--oro); padding: 10px 20px; border-radius: 20px; cursor: pointer; margin: 5px; text-transform: uppercase; font-size: 0.7rem; }
         .btn:hover { background: var(--oro); color: #000; }
+        .btn-back-main { background: none; border: 1px solid rgba(255,255,255,0.3); color: #888; padding: 6px 14px; border-radius: 4px; font-size: 0.7rem; cursor: pointer; align-self: center; margin: 20px 0; width: fit-content; text-transform: uppercase; }
         
-        #visor-full { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 5000; display: none; align-items: center; justify-content: center; }
-        #visor-full img { max-width: 95%; max-height: 95%; }
+        #visor-full { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 5000; display: none; align-items: center; justify-content: center; flex-direction: column; }
+        #visor-full img { max-width: 95%; max-height: 85%; object-fit: contain; }
+        .presentation-note { color: var(--oro); font-size: 1rem; margin-top: 15px; font-family: 'Playfair Display', serif; text-align: center; padding: 0 20px; }
+        
         .texto-carta { padding: 30px; text-align: center; line-height: 1.8; font-size: 0.9rem; max-width: 85%; }
+        .controles-utilidad { display: flex; justify-content: center; gap: 10px; margin-bottom: 8px; }
+        .foto-box { position: relative; display: inline-block; margin: 5px; }
+        .btn-x { position: absolute; top:0; right:0; background:red; color:white; border:none; cursor:pointer; }
     </style>
 </head>
-<body onmousemove="iluminar(event)">
+<body onmousemove="iluminar(event)" onclick="Notification.requestPermission()">
 
     <div id="loader"><h2>Nuestra historia</h2></div>
     <div id="fondo-rojo"></div>
@@ -63,37 +128,71 @@
         <h1>NUESTRA HISTORIA</h1>
         <div class="grid-menu">
             <div class="cuadro full" onclick="abrir('m-nosotros')"><h2>Lo que eres para mí</h2></div>
-            <div class="cuadro full" onclick="abrir('m-momentos')"><h2>Momentos</h2></div>
+            <div class="cuadro full" onclick="m_momentos_click()"><h2>Momentos</h2></div>
             <div class="cuadro" onclick="abrir('m-juego')"><h2>Jueguito</h2></div>
             <div class="cuadro" onclick="abrir('m-dibujo')"><h2>Lienzo</h2></div>
+            <div class="cuadro" onclick="abrir('m-notitas')"><h2>Notitas</h2></div>
+            <div class="cuadro" onclick="abrir('m-capsula')"><h2>Cápsula de Mensajes</h2></div>
+            <div class="cuadro full" onclick="abrir('m-arbol')"><h2>Nuestro Arbolito</h2></div>
         </div>
     </div>
 
     <div id="m-nosotros" class="modal">
-        <div class="seccion-titulo">Para ti</div>
+        <div class="seccion-titulo" style="margin-top:20px;">Para ti</div>
         <div class="texto-carta">
-            Tú eres para mí en los días buenos y también en los complicados, cuando no sé cómo explicar lo que siento pero aun así te quedas.
-            Eres mi sonrisa inesperada, mi tranquilidad cuando todo pesa y mi razón para creer que vale la pena amar sin miedo.<br><br>
-            No prometo ser perfecto, pero sí prometo cuidarte, respetarte y elegirte cada día.
-            Quiero crecer contigo, aprender de ti y caminar a tu lado, paso a paso, sin prisas pero sin dudas.<br><br>
-            Tú eres mi novia, y para mí eres mi lugar seguro, apoyo y amor.
-            Tú eres para mí… hoy, mañana y siempre <3
+            Tú eres para mí en los días buenos y también en los complicados, cuando no sé cómo explicar lo que siento pero aun así te quedas. Eres mi sonrisa inesperada, mi tranquilidad cuando todo pesa y mi razón para creer que vale la pena amar sin miedo.<br><br>
+            No prometo ser perfecto, pero sí prometo cuidarte, respetarte y elegirte cada día. Quiero crecer contigo, aprender de ti y caminar a tu lado, paso a paso, sin prisas pero sin dudas.<br><br>
+            Tú eres mi novia, y para mí eres mi lugar seguro, apoyo y amor. Tú eres para mí… hoy, mañana y siempre &lt;3
         </div>
         <button class="btn" onclick="cerrar('m-nosotros')">Cerrar</button>
     </div>
 
     <div id="m-momentos" class="modal">
-        <div class="seccion-titulo">MOMENTOS</div>
-        <div style="margin-bottom: 10px;">
-            <button class="btn" onclick="document.getElementById('fileIn').click()">Subir Fotos</button>
-            <button class="btn" onclick="cerrar('m-momentos')">Volver</button>
+        <div class="netflix-container">
+            <div class="netflix-header">
+                <div class="netflix-logo">NETFLIX</div>
+                <div class="netflix-nav-icons">
+                    <button class="netflix-icon-btn">🔍</button>
+                    <div class="netflix-avatar"></div>
+                </div>
+            </div>
+
+            <div class="netflix-hero" id="hero-portada" onclick="document.getElementById('heroIn').click()">
+                <div class="hero-placeholder" id="hero-txt">Haz clic aquí para añadir o cambiar la foto de portada principal ❤️</div>
+                <div class="hero-content">
+                    <div class="n-tag"><span>N</span> S E R I E</div>
+                    <div class="serie-title" id="lbl-serie-title">Diego y Abigail</div>
+                    
+                    <div class="meta-badges">
+                        <div class="top10">TOP <span>10</span></div>
+                    </div>
+                    
+                    <div class="netflix-buttons">
+                        <button class="btn-play" onclick="event.stopPropagation(); lanzarPresentacion()">▶ Play</button>
+                        <button class="btn-add" onclick="event.stopPropagation(); document.getElementById('fileIn').click()">＋ Agregar episodio</button>
+                    </div>
+                    
+                    <p class="synopsis" id="lbl-synopsis">
+                        Tú sin duda eres la serie con la que deseo continuar toda mi vida.
+                    </p>
+                </div>
+            </div>
+
+            <input type="file" id="heroIn" hidden onchange="procesarPortada(event)">
+            <input type="file" id="fileIn" hidden onchange="procesarFoto(event)" multiple>
+
+            <div class="episodios-section">
+                <div class="episodios-title">Episodios</div>
+                <div class="netflix-grid" id="galeria-fotos"></div>
+            </div>
+            
+            <button class="btn-back-main" onclick="cerrar('m-momentos')">Volver al Menú Principal</button>
         </div>
-        <input type="file" id="fileIn" hidden onchange="procesarFoto(event)" multiple>
-        <div class="momentos-grid" id="galeria-fotos"></div>
     </div>
 
-    <div id="m-juego" class="modal">
+    <div id="m-juego" class="modal" style="padding-top:20px;">
         <div id="current-score" style="color:var(--oro); font-size: 1.2rem; margin-bottom: 5px;">PUNTOS: 0</div>
+        <div id="global-highscore" style="color:white; font-size: 0.8rem; letter-spacing: 1px; margin-bottom: 10px;">RÉCORD A VENCER: 0</div>
         <div id="game-container">
             <canvas id="gameCanvas" width="280" height="380"></canvas>
             <div id="game-over">
@@ -109,11 +208,13 @@
         </div>
     </div>
 
-    <div id="m-dibujo" class="modal">
+    <div id="m-dibujo" class="modal" style="padding-top:20px;">
         <div class="seccion-titulo">DIBUJA ALGO</div>
-        <div style="margin-bottom: 10px;">
+        <div class="controles-utilidad">
             <button class="btn" onclick="setLienzo('white')">Blanco</button>
             <button class="btn" onclick="setLienzo('black')">Negro</button>
+            <button class="btn" onclick="activarGoma()" id="btn-goma">Goma</button>
+            <button class="btn" onclick="deshacerTrazo()">← Deshacer</button>
         </div>
         <canvas id="canvas-dibujo" width="300" height="350"></canvas>
         <div class="palette" id="colores"></div>
@@ -125,9 +226,57 @@
         <div class="momentos-grid" id="galeria-dibujos"></div>
     </div>
 
-    <div id="visor-full" onclick="this.style.display='none'"><img id="img-v" src=""></div>
+    <div id="m-notitas" class="modal" style="padding-top:20px;">
+        <div class="seccion-titulo">Dejémonos Notitas</div>
+        <div class="notitas-container">
+            <div class="notitas-form">
+                <input type="text" id="notaInput" class="notitas-input" placeholder="Escribe algo lindo aquí para el amor de tu vida...">
+                <button class="btn" style="margin:0;" onclick="guardarNota()">Enviar</button>
+            </div>
+            <div class="notitas-grid" id="contenedor-notitas"></div>
+        </div>
+        <button class="btn" style="margin-top:20px;" onclick="cerrar('m-notitas')">Volver</button>
+    </div>
 
-    <script type="module">
+    <div id="m-capsula" class="modal" style="padding-top:20px;">
+        <div class="seccion-titulo">Cápsula Secreta</div>
+        <div class="capsula-box">
+            <div style="display:flex; gap:10px; justify-content:center; width:100%;">
+                <button class="btn" onclick="alternarCapsulaSub('crear')">Crear Mensaje</button>
+                <button class="btn" onclick="alternarCapsulaSub('abrir')">Ingresar Código</button>
+            </div>
+
+            <div id="sub-crear-capsula" class="capsula-subcontainer">
+                <p style="font-size:0.75rem; color:#aaa; margin:0 0 5px 0;">Escribe el mensaje oculto:</p>
+                <textarea id="capsulaTexto" class="capsula-textarea" placeholder="Escribe tu mensaje secreto aquí..."></textarea>
+                <p style="font-size:0.75rem; color:#aaa; margin:5px 0 5px 0;">crea un codigo(valido letras y numeros validos espacios jskjskj)</p>
+                <input type="text" id="capsulaCodigoAsignado" class="capsula-input-code" placeholder="">
+                <button class="btn" onclick="guardarMensajeCapsula()" style="align-self:center; margin-top:5px;">Guardar Bloqueado</button>
+                <div id="status-crear" class="status-capsula"></div>
+            </div>
+
+            <div id="sub-abrir-capsula" class="capsula-subcontainer">
+                <p style="font-size:0.8rem; color:white; margin:0 0 10px 0;">Introduce el código secreto para abrir la cápsula:</p>
+                <input type="text" id="capsulaCodigoBuscar" class="capsula-input-code" placeholder="Escribe el código aquí...">
+                <button class="btn" onclick="buscarMensajeCapsula()" style="align-self:center; margin-top:5px;">Descifrar</button>
+                <div id="resultado-capsula-texto" class="mensaje-revelado" style="display:none;"></div>
+            </div>
+        </div>
+        <button class="btn" style="margin-top:25px;" onclick="cerrar('m-capsula')">Volver al Menú</button>
+    </div>
+
+    <div id="m-arbol" class="modal" style="padding-top:20px;">
+        <div class="seccion-titulo">Nuestro Arbolito</div>
+        <p id="tiempo-juntos" style="color: var(--oro); font-size: 0.85rem; text-align: center; margin: 0 15px 15px 15px;"></p>
+        <canvas id="canvas-arbol" width="300" height="360"></canvas>
+        <div style="margin-top: 15px;">
+            <button class="btn" onclick="cerrar('m-arbol')">Volver</button>
+        </div>
+    </div>
+
+    <div id="visor-full" onclick="detenerPresentacionOrCerrar()"><img id="img-v" src=""><div class="presentation-note" id="nota-v"></div></div>
+
+   <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
         import { getDatabase, ref, push, onValue, remove, set } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-database.js";
 
@@ -144,10 +293,80 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
+        // --- EL MENSAJERO ---
+        window.lanzarNotificacion = (titulo, cuerpo) => {
+            push(ref(db, 'notificaciones'), { t: titulo, c: cuerpo, time: Date.now() });
+        };
+
+        // Escucha los avisos
+        onValue(ref(db, 'notificaciones'), (snapshot) => {
+            const data = snapshot.val();
+            if (!data) return;
+            const keys = Object.keys(data);
+            const ultima = data[keys[keys.length - 1]];
+            if (Date.now() - ultima.time < 5000 && Notification.permission === "granted") {
+               new Notification(ultima.t, { body: ultima.c, icon: 'https://cdn-icons-png.flaticon.com/512/833/833472.png' });
+            }
+        });
+
+        // --- FUNCIONES CON AVISO AUTOMÁTICO ---
+        // Solo agrega esta línea al final de tus funciones de guardado existentes:
+        // lanzarNotificacion("¡Título!", "Mensaje para ella");
+        
+        window.guardarNota = () => {
+            const input = document.getElementById('notaInput');
+            push(ref(db, 'notitas'), { texto: input.value, time: Date.now() });
+            lanzarNotificacion("¡Nueva Notita! 📝", "Te han dejado un mensaje nuevo");
+            input.value = '';
+        };
+
+        window.guardarD = () => {
+            const lCan = document.getElementById('canvas-dibujo');
+            push(ref(db, 'dibujos'), { img: lCan.toDataURL() });
+            lanzarNotificacion("¡Nuevo Dibujo! 🎨", "Han hecho un dibujo para ti");
+            window.limpiarD();
+        };
+
+        // --- LO DEMÁS ---
+        window.recordGlobalNube = 0;
+        window.fotosPresentacion = [];
+        let mensajesCapsulaGlobal = {};
+    </script>
+            push(ref(db, 'notificaciones'), { t: titulo, c: cuerpo, time: Date.now() });
+        }
+
+        window.procesarPortada = (e) => {
+            const file = e.target.files[0];
+            if(file) {
+                const r = new FileReader();
+                r.onload = (ev) => {
+                    set(ref(db, 'portada_momento'), { img: ev.target.result });
+                    lanzarNotificacion("¡Nueva Portada!", "Actualizaron la portada de sus momentos en la serie ❤️");
+                };
+                r.readAsDataURL(file);
+            }
+        };
+
+        onValue(ref(db, 'portada_momento'), (snapshot) => {
+            const data = snapshot.val();
+            const hero = document.getElementById('hero-portada');
+            const txt = document.getElementById('hero-txt');
+            if(data && data.img) {
+                hero.style.backgroundImage = `url(${data.img})`;
+                txt.style.display = 'none';
+            } else {
+                hero.style.backgroundImage = 'none';
+                txt.style.display = 'block';
+            }
+        });
+
         window.procesarFoto = (e) => {
             Array.from(e.target.files).forEach(f => {
                 const r = new FileReader();
-                r.onload = (ev) => push(ref(db, 'fotos'), { img: ev.target.result, desc: '' });
+                r.onload = (ev) => {
+                    push(ref(db, 'fotos'), { img: ev.target.result, desc: '' });
+                    lanzarNotificacion("¡Nuevo Momento!", "Subieron una nueva foto de su historia ❤️");
+                };
                 r.readAsDataURL(f);
             });
         };
@@ -155,14 +374,28 @@
         onValue(ref(db, 'fotos'), (snapshot) => {
             const g = document.getElementById('galeria-fotos'); g.innerHTML = '';
             const data = snapshot.val();
-            if(data) Object.keys(data).reverse().forEach(k => {
-                const item = data[k];
-                const d = document.createElement('div'); d.className = 'foto-box';
-                d.innerHTML = `<button class="btn-x" onclick="eliminarF('${k}')">X</button>
-                    <img src="${item.img}" onclick="full('${item.img}')">
-                    <input class="desc-input" placeholder="Añadir nota..." value="${item.desc}" onchange="actDesc('${k}', this.value)">`;
-                g.appendChild(d);
-            });
+            window.fotosPresentacion = [];
+            
+            if(data) {
+                Object.keys(data).forEach(k => {
+                    window.fotosPresentacion.push({ img: data[k].img, desc: data[k].desc || '' });
+                });
+
+                Object.keys(data).reverse().forEach(k => {
+                    const item = data[k];
+                    const card = document.createElement('div'); card.className = 'episode-card';
+                    card.innerHTML = `
+                        <button class="btn-delete-episode" onclick="event.stopPropagation(); eliminarF('${k}')">✕</button>
+                        <div class="episode-thumb-container">
+                            <img src="${item.img}" onclick="full('${item.img}', '${item.desc.replace(/'/g, "\\'")}')">
+                        </div>
+                        <div class="episode-info">
+                            <input class="episode-note-input" placeholder="Añadir nota..." value="${item.desc}" onchange="actDesc('${k}', this.value)">
+                        </div>
+                    `;
+                    g.appendChild(card);
+                });
+            }
         });
 
         window.eliminarF = (k) => remove(ref(db, 'fotos/'+k));
@@ -174,6 +407,7 @@
             const tCtx = temp.getContext('2d'); tCtx.fillStyle = window.lienzoColor || 'white'; tCtx.fillRect(0,0,300,350);
             tCtx.drawImage(lCan, 0,0);
             push(ref(db, 'dibujos'), { img: temp.toDataURL() });
+            lanzarNotificacion("¡Te hicieron un Dibujo!", "Corrieron a dejarte una obra de arte en el lienzo ✍️");
             window.limpiarD();
         };
 
@@ -182,26 +416,236 @@
             const data = snapshot.val();
             if(data) Object.keys(data).reverse().forEach(k => {
                 const d = document.createElement('div'); d.className = 'foto-box';
-                d.innerHTML = `<button class="btn-x" onclick="eliminarD('${k}')">X</button><img src="${data[k].img}" onclick="full('${data[k].img}')">`;
+                d.innerHTML = `<button class="btn-x" onclick="eliminarD('${k}')">X</button><img src="${data[k].img}" style="width:70px;height:70px;object-fit:cover;" onclick="full('${data[k].img}', '')">`;
                 g.appendChild(d);
             });
         });
+
+        /* NOTITAS NUBE */
+        window.guardarNota = () => {
+            const input = document.getElementById('notaInput');
+            const texto = input.value.trim();
+            if(!texto) return;
+            
+            const fechaStr = new Date().toLocaleDateString('es-MX', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+            push(ref(db, 'notitas'), { texto: texto, fecha: fechaStr, time: Date.now() });
+            lanzarNotificacion("¡Nueva Notita! 📝", "Te dejaron un mensajito nuevo en la sección de notitas.");
+            input.value = '';
+        };
+
+        onValue(ref(db, 'notitas'), (snapshot) => {
+            const contenedor = document.getElementById('contenedor-notitas');
+            contenedor.innerHTML = '';
+            const data = snapshot.val();
+            if(data) {
+                Object.keys(data).reverse().forEach(k => {
+                    const n = data[k];
+                    const card = document.createElement('div');
+                    card.className = 'notita-card';
+                    card.innerHTML = `
+                        <button class="btn-delete-note" onclick="eliminarNota('${k}')">✕</button>
+                        <div class="notita-text">${n.texto}</div>
+                        <div class="notita-date">${n.fecha}</div>
+                    `;
+                    contenedor.appendChild(card);
+                });
+            }
+        });
+        window.eliminarNota = (k) => remove(ref(db, 'notitas/'+k));
+
+        /* LÓGICA DE FIREBASE CORREGIDA PARA PERMITIR ESPACIOS EN EL CÓDIGO CLAVE */
+        window.guardarMensajeCapsula = () => {
+            const txtArea = document.getElementById('capsulaTexto');
+            const codeIn = document.getElementById('capsulaCodigoAsignado');
+            const statusDiv = document.getElementById('status-crear');
+            
+            const texto = txtArea.value.trim();
+            // Mantiene los espacios internos pero limpia los de las esquinas y pasa a minúsculas
+            const codigo = codeIn.value.trim().toLowerCase(); 
+
+            if(!texto || !codigo) {
+                statusDiv.style.color = "#ff4757";
+                statusDiv.innerText = "Por favor llena tanto el mensaje como el código clave ❤️";
+                statusDiv.style.display = 'block';
+                return;
+            }
+
+            // Sanitización básica para rutas de Firebase (reemplaza caracteres prohibidos . $ # [ ] / )
+            const codigoRutaDb = codigo.replace(/[\.\$\#\[\]\/]/g, "_");
+
+            set(ref(db, 'capsulas/' + codigoRutaDb), { msg: texto, time: Date.now() });
+            lanzarNotificacion("¡Se creó un Mensaje Oculto! 🔐", "Te han dejado una cápsula en secreto. ¡Pide el código para descubrirlo!");
+            
+            // Retroalimentación visual en pantalla en vez de alert()
+            statusDiv.style.color = "#2ecc71";
+            statusDiv.innerText = `¡Mensaje secreto guardado con éxito bajo la clave: "${codigo}"!`;
+            statusDiv.style.display = 'block';
+
+            txtArea.value = '';
+            codeIn.value = '';
+            setTimeout(() => { statusDiv.style.display = 'none'; }, 4000);
+        };
+
+        onValue(ref(db, 'capsulas'), (snapshot) => {
+            mensajesCapsulaGlobal = snapshot.val() || {};
+        });
+
+        window.buscarMensajeCapsula = () => {
+            const buscarIn = document.getElementById('capsulaCodigoBuscar');
+            const codBuscar = buscarIn.value.trim().toLowerCase().replace(/[\.\$\#\[\]\/]/g, "_");
+            const visorTexto = document.getElementById('resultado-capsula-texto');
+
+            if(!codBuscar) return;
+
+            if(mensajesCapsulaGlobal && mensajesCapsulaGlobal[codBuscar]) {
+                visorTexto.innerText = mensajesCapsulaGlobal[codBuscar].msg;
+                visorTexto.style.display = 'block';
+            } else {
+                visorTexto.innerText = "❌ Código incorrecto. ¡Pregúntale bien la clave a tu amor!";
+                visorTexto.style.display = 'block';
+            }
+        };
+
+        onValue(ref(db, 'juego_record'), (snapshot) => {
+            const val = snapshot.val();
+            window.recordGlobalNube = val ? val.puntos : 0;
+            document.getElementById('global-highscore').innerText = "RÉCORD A VENCER: " + window.recordGlobalNube;
+        });
+
+        window.actualizarRecordNube = (nuevoPuntaje) => {
+            set(ref(db, 'juego_record'), { puntos: nuevoPuntaje, fecha: Date.now() });
+            lanzarNotificacion("¡Récord Superado! 🏆", `¡Acaban de imponer una nueva marca de ${nuevoPuntaje} puntos! Supera eso 😉`);
+        };
+
+        onValue(ref(db, 'notificaciones'), (snapshot) => {
+            const data = snapshot.val();
+            if(data) {
+                const keys = Object.keys(data);
+                const ultima = data[keys[keys.length - 1]];
+                if(Date.now() - ultima.time < 4000 && Notification.permission === "granted") {
+                    navigator.serviceWorker.ready.then(reg => {
+                        reg.showNotification(ultima.t, { body: ultima.c, icon: 'https://cdn-icons-png.flaticon.com/512/833/833472.png' });
+                    });
+                }
+            }
+        });
+
         window.eliminarD = (k) => remove(ref(db, 'dibujos/'+k));
-        window.full = (s) => { document.getElementById('img-v').src=s; document.getElementById('visor-full').style.display='flex'; };
+        
+        window.full = (s, note) => { 
+            document.getElementById('img-v').src=s; 
+            document.getElementById('nota-v').innerText = note ? note : '';
+            document.getElementById('visor-full').style.display='flex'; 
+        };
     </script>
 
     <script>
+        let intervalPresentacion = null;
+
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('data:text/javascript;base64,c2VsZi5hZGRFdmVudExpc3RlbmVyKCdwdXNoJywgZSA9PiB7IGNvbnN0IGQgPSBlLmRhdGEuanNvbigpOyBlLndhaXRVbnRpbChzZWxmLnJlZ2lzdHJhdGlvbi5zaG93Tm90aWZpY2F0aW9uKGQudGl0bGUsIHsgYm9keTogZC5ib2R5IH0pKTsgfSk7').catch(() => {});
+        }
+
         window.onload = () => {
-            setTimeout(() => { document.getElementById('loader').style.opacity = '0';
-            setTimeout(() => document.getElementById('loader').style.display='none', 1000); }, 1500);
             initS(); drawS(); 
+            if (Notification.permission !== "granted" && Notification.permission !== "denied") {
+                Notification.requestPermission().catch(() => {});
+            }
+            setTimeout(() => { 
+                const loader = document.getElementById('loader');
+                if(loader) {
+                    loader.style.opacity = '0';
+                    setTimeout(() => loader.style.display='none', 1000); 
+                }
+            }, 1200);
         };
 
-        function iluminar(e) { document.getElementById('fondo-rojo').style.background = `radial-gradient(circle at ${e.clientX}px ${e.clientY}px, var(--rojo) 0%, var(--negro) 80%)`; }
-        function abrir(id) { document.getElementById(id).style.display = 'flex'; if(id==='m-dibujo') initLienzo(); }
-        function cerrar(id) { document.getElementById(id).style.display = 'none'; gPlay = false; }
+        function iluminar(e) { 
+            const fr = document.getElementById('fondo-rojo');
+            if(fr) fr.style.background = `radial-gradient(circle at ${e.clientX}px ${e.clientY}px, var(--rojo) 0%, var(--negro) 80%)`; 
+        }
+        function abrir(id) { 
+            document.getElementById(id).style.display = 'flex'; 
+            if(id==='m-dibujo') initLienzo(); 
+            if(id==='m-arbol') initArbol();
+        }
+        function cerrar(id) { 
+            document.getElementById(id).style.display = 'none'; 
+            gPlay = false; 
+            dettPresentacion(); 
+            if(id === 'm-capsula') {
+                document.getElementById('sub-crear-capsula').style.display = 'none';
+                document.getElementById('sub-abrir-capsula').style.display = 'none';
+                document.getElementById('resultado-capsula-texto').style.display = 'none';
+                document.getElementById('status-crear').style.display = 'none';
+                document.getElementById('capsulaCodigoBuscar').value = '';
+            }
+        }
 
-        // ESTRELLAS
+        /* PERSONALIZACIÓN ADICIONAL PARA TU NOVIA AL CLICKEAR MOMENTOS */
+        function m_momentos_click() {
+            // Nota: Al renderizar el modal, puedes cambiar dinámicamente títulos basados en tus imágenes cargadas
+            // Ejemplo: si quieres acoplarlo exactamente como en tu mockup de Diego y Abigail
+            document.getElementById('lbl-serie-title').innerText = "Diego y Abigail";
+            document.getElementById('lbl-synopsis').innerText = "Sin duda alguna tu eres mi serie favorita con la que me gustaria continuar toda la vida <3";
+            abrir('m-momentos');
+        }
+
+        /* ALTERNAR VISTAS CÁPSULA */
+        function alternarCapsulaSub(opcion) {
+            document.getElementById('resultado-capsula-texto').style.display = 'none';
+            document.getElementById('capsulaCodigoBuscar').value = '';
+            document.getElementById('status-crear').style.display = 'none';
+            if(opcion === 'crear') {
+                document.getElementById('sub-crear-capsula').style.display = 'flex';
+                document.getElementById('sub-abrir-capsula').style.display = 'none';
+            } else {
+                document.getElementById('sub-crear-capsula').style.display = 'none';
+                document.getElementById('sub-abrir-capsula').style.display = 'flex';
+            }
+        }
+
+        /* PRESENTACIÓN (PLAY) */
+        function lanzarPresentacion() {
+            if(!window.fotosPresentacion || window.fotosPresentacion.length === 0) {
+                alert("Primero agreguen fotos en sus episodios para poder reproducir la presentación ❤️");
+                return;
+            }
+            
+            let index = 0;
+            const visor = document.getElementById('visor-full');
+            const img = document.getElementById('img-v');
+            const nota = document.getElementById('nota-v');
+            
+            const mostrarCuadro = () => {
+                if(index >= window.fotosPresentacion.length) {
+                    dettPresentacion();
+                    visor.style.display = 'none';
+                    return;
+                }
+                img.src = window.fotosPresentacion[index].img;
+                nota.innerText = window.fotosPresentacion[index].desc || '';
+                index++;
+            };
+
+            visor.style.display = 'flex';
+            mostrarCuadro();
+            intervalPresentacion = setInterval(mostrarCuadro, 3500);
+        }
+
+        function dettPresentacion() {
+            if(intervalPresentacion) {
+                clearInterval(intervalPresentacion);
+                intervalPresentacion = null;
+            }
+        }
+
+        function detenerPresentacionOrCerrar() {
+            dettPresentacion();
+            document.getElementById('visor-full').style.display = 'none';
+        }
+
+        /* ESTRELLAS */
         const ce = document.getElementById('canvas-estrellas'), ctxE = ce.getContext('2d');
         let estrellas = [];
         function initS(){
@@ -214,7 +658,7 @@
             requestAnimationFrame(drawS);
         }
 
-        // JUEGO (RESTAURADO RÉCORD Y VELOCIDAD)
+        /* JUEGO COMPETITIVO */
         const gCan = document.getElementById('gameCanvas'), gCtx = gCan.getContext('2d');
         let gPlay = false, score = 0, px = 125, obs = [], vBase = 2, lastV = 0;
         
@@ -236,47 +680,36 @@
             if(!gPlay) return;
             gCtx.clearRect(0,0,280,380);
             document.getElementById('current-score').innerText = "PUNTOS: " + score;
-            
-            // Aumentar velocidad cada 5 segundos
             if(Date.now() - lastV > 5000) { vBase += 0.4; lastV = Date.now(); }
-            
-            gCtx.fillStyle = '#f3e5ab'; 
-            gCtx.fillRect(px, 340, 30, 30);
-            
+            gCtx.fillStyle = '#f3e5ab'; gCtx.fillRect(px, 340, 30, 30);
             if(Math.random() < 0.03) obs.push({x: Math.random()*260, y: -20});
-            
             obs.forEach((o, i) => {
-                o.y += vBase;
-                gCtx.fillStyle = 'white'; 
-                gCtx.fillRect(o.x, o.y, 18, 18);
-                
-                // Colisión
+                o.y += vBase; gCtx.fillStyle = 'white'; gCtx.fillRect(o.x, o.y, 18, 18);
                 if(o.y > 340 && o.x < px+30 && o.x+18 > px) {
                     gPlay = false;
-                    let record = localStorage.getItem('record_final') || 0;
-                    if(score > record) {
-                        localStorage.setItem('record_final', score);
-                        record = score;
+                    document.getElementById('final-score').innerText = "Tu Puntaje: " + score;
+                    
+                    if(score > window.recordGlobalNube) {
+                        window.actualizarRecordNube(score);
+                        document.getElementById('high-record').innerText = "¡NUEVO RÉCORD GLOBAL!";
+                    } else {
+                        document.getElementById('high-record').innerText = "Récord a vencer: " + window.recordGlobalNube;
                     }
-                    document.getElementById('final-score').innerText = "Puntaje: " + score;
-                    document.getElementById('high-record').innerText = "Récord: " + record;
                     document.getElementById('game-over').style.display = 'flex';
                 }
-                
-                if(o.y > 380) { 
-                    obs.splice(i,1); 
-                    score += 5; 
-                }
+                if(o.y > 380) { obs.splice(i,1); score += 5; }
             });
             requestAnimationFrame(loopG);
         }
 
-        // LIENZO (PARA CELULAR)
+        /* LIENZO */
         let lCan, lCtx, drawing = false;
-        window.lienzoColor = 'white';
+        let historialTrazos = [];
+
         function initLienzo() {
             lCan = document.getElementById('canvas-dibujo'); lCtx = lCan.getContext('2d');
             lCtx.lineWidth = 3; lCtx.lineCap = 'round'; lCtx.strokeStyle = "#000";
+            guardarEstado();
 
             function getPos(e) {
                 const r = lCan.getBoundingClientRect();
@@ -286,7 +719,7 @@
             }
             function empezar(e) { drawing = true; lCtx.beginPath(); const p = getPos(e); lCtx.moveTo(p.x, p.y); if(e.touches) e.preventDefault(); }
             function mover(e) { if(!drawing) return; e.preventDefault(); const p = getPos(e); lCtx.lineTo(p.x, p.y); lCtx.stroke(); }
-            function parar() { drawing = false; }
+            function parar() { if(drawing) { drawing = false; guardarEstado(); } }
 
             lCan.onmousedown = empezar; lCan.onmousemove = mover; window.onmouseup = parar;
             lCan.addEventListener('touchstart', empezar, {passive: false});
@@ -295,13 +728,69 @@
 
             if(!document.getElementById('colores').innerHTML) {
                 ['#000','#F00','#0F0','#00F','#FF0','#F0F','#0FF','#FFF','#8B4513','#FFA500','#808080'].forEach(c => {
-                    const d = document.createElement('div'); d.className='c-dot'; d.style.background=c; d.onclick=()=>lCtx.strokeStyle=c;
+                    const d = document.createElement('div'); d.className='c-dot'; d.style.background=c; 
+                    d.onclick=()=>{ desactivarGoma(); lCtx.strokeStyle=c; };
                     document.getElementById('colores').appendChild(d);
                 });
             }
         }
-        function setLienzo(c) { window.lienzoColor = c; lCan.style.background = c; }
-        window.limpiarD = () => { lCtx.clearRect(0,0,300,350); }
+        function setLienzo(c) { window.lienzoColor = c; lCan.style.background = c; limpiarD(); }
+        window.limpiarD = () => { lCtx.clearRect(0,0,300,350); historialTrazos = []; guardarEstado(); }
+        
+        function guardarEstado() { if (lCtx) historialTrazos.push(lCtx.getImageData(0, 0, 300, 350)); }
+        function deshacerTrazo() { if (historialTrazos.length > 1) { historialTrazos.pop(); lCtx.putImageData(historialTrazos[historialTrazos.length - 1], 0, 0); } }
+        function activarGoma() { lCtx.strokeStyle = window.lienzoColor === 'black' ? '#000' : '#FFF'; document.getElementById('btn-goma').style.background = '#f3e5ab'; document.getElementById('btn-goma').style.color = '#000'; }
+        function desactivarGoma() { document.getElementById('btn-goma').style.background = 'none'; document.getElementById('btn-goma').style.color = '#f3e5ab'; }
+
+        /* ARBOLITO NATURAL */
+        function initArbol() {
+            const aCan = document.getElementById('canvas-arbol'), aCtx = aCan.getContext('2d');
+            aCtx.clearRect(0, 0, 300, 360);
+            
+            const fInicio = new Date('2025-03-29');
+            const fActual = new Date();
+            const diff = Math.abs(fActual - fInicio);
+            const dias = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const meses = Math.floor(dias / 30.4);
+
+            document.getElementById('tiempo-juntos').innerText = `Nuestro arbolito desde hace: ${dias} días (${meses} meses)`;
+
+            let maxNivel = 8; 
+            let lenRama = 60; 
+
+            function dibujarRama(x, y, len, angulo, grosor, nivel) {
+                aCtx.beginPath();
+                aCtx.moveTo(x, y);
+                const nx = x + Math.cos(angulo) * len;
+                const ny = y + Math.sin(angulo) * len;
+                aCtx.lineTo(nx, ny);
+                aCtx.lineWidth = grosor;
+                
+                aCtx.strokeStyle = `rgb(${35 + nivel * 5}, ${115 - nivel * 6}, 45)`;
+                aCtx.lineCap = 'round';
+                aCtx.stroke();
+
+                if (nivel >= maxNivel) {
+                    aCtx.beginPath();
+                    aCtx.arc(nx, ny, 5, 0, Math.PI * 2);
+                    aCtx.fillStyle = '#32cd32'; 
+                    aCtx.fill();
+                    return;
+                }
+
+                dibujarRama(nx, ny, len * 0.76, angulo - 0.35, grosor * 0.72, nivel + 1);
+                dibujarRama(nx, ny, len * 0.76, angulo + 0.35, grosor * 0.72, nivel + 1);
+            }
+
+            dibujarRama(150, 335, lenRama, -Math.PI / 2, 9, 1);
+
+            for(let i = 0; i < meses; i++) {
+                const cx = 50 + (Math.sin(i * 1.7) * 75) + 100;
+                const cy = 90 + (Math.cos(i * 1.2) * 55) + 70;
+                aCtx.font = "12px sans-serif";
+                aCtx.fillText("❤️", cx, cy);
+            }
+        }
     </script>
 </body>
 </html>
